@@ -30,7 +30,7 @@ rayon = "1.8.1"
 
 # Natural Language Processing
 tokenizers = {version="0.22.1", default-features = false, features=["http"]}
-text-splitter = {version= "0.28.0", features=["tokenizers", "markdown"]}
+text-splitter = {version= "0.29.0", features=["tokenizers", "markdown"]}
 
 tracing = "0.1.41"
 
@@ -47,7 +47,7 @@ anyhow = "1.0.98"
 tokio = { version = "1.40.0", features = ["macros", "rt-multi-thread"] }
 
 chrono = "0.4.38"
-rand = "0.9.0"
+rand = "0.10.0"
 itertools = "0.14.0"
 
 # Image processing
