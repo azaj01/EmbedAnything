@@ -67,6 +67,33 @@
 //! # Ok(())
 //! # }
 //! ```
+//! //! # Feature flags
+//!
+//! The crate can be configured with the following [Cargo features](https://doc.rust-lang.org/cargo/reference/features.html):
+//!
+//! | Feature | Description |
+//! |---------|-------------|
+//! | **default** | Enables `rustls-tls` for TLS. Keep this unless you need a different TLS backend. |
+//! | **rustls-tls** | Use [Rustls](https://github.com/rustls/rustls) for TLS in HTTP clients (reqwest, hf-hub, tokenizers). |
+//! | **mkl** | Intel [MKL](https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html) (Math Kernel Library) for CPU-accelerated linear algebra. |
+//! | **accelerate** | Apple [Accelerate](https://developer.apple.com/documentation/accelerate) framework for optimized math on macOS. |
+//! | **cuda** | [NVIDIA CUDA](https://developer.nvidia.com/cuda-toolkit) support for GPU-accelerated inference. |
+//! | **cudnn** | [cuDNN](https://developer.nvidia.com/cudnn) for CUDA-accelerated deep learning (enables `cuda`-related optimizations). |
+//! | **flash-attn** | [Flash Attention](https://github.com/Dao-AILab/flash-attention) for faster attention on CUDA GPUs. Implies **cuda**. |
+//! | **metal** | Apple [Metal](https://developer.apple.com/metal/) for GPU-accelerated inference on macOS. |
+//! | **audio** | Audio embedding via [Symphonia](https://github.com/pdeljanov/Symphonia): transcribe and embed audio files (e.g. `emb_audio`). |
+//! | **ort** | [ONNX Runtime](https://onnxruntime.ai/) for running ONNX models (e.g. reranker and ONNX-based embedders). |
+//! | **aws** | [AWS SDK](https://aws.amazon.com/sdk-for-rust/) for loading objects from S3 (e.g. `s3_loader` module). |
+//!
+//! ## Example
+//!
+//! Enable only the features you need to reduce build time and binary size:
+//!
+//! ```toml
+//! [dependencies]
+//! embed_anything = { path = "rust", default-features = false, features = ["rustls-tls", "audio", "aws"] }
+//! ```
+//!
 
 pub mod chunkers;
 pub mod config;
@@ -77,6 +104,7 @@ pub mod models;
 #[cfg(feature = "ort")]
 pub mod reranker;
 pub mod text_loader;
+#[cfg(feature = "aws")]
 pub mod s3_loader;
 
 use anyhow::{Error, Result};

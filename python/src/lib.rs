@@ -1,5 +1,6 @@
 pub mod config;
 pub mod models;
+#[cfg(feature = "aws")]
 pub mod s3_client;
 use embed_anything::embeddings::embed::{TextEmbedder, VisionEmbedder};
 use embed_anything::{
