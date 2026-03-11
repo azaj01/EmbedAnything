@@ -91,7 +91,7 @@ EmbedAnything is a minimalist, yet highly performant, modular, lightning-fast, l
 - **AWS S3 Bucket:** : Directly import AWS S3 bucket files.
 - **Prebult Docker Image** : Just pull it: starlightsearch/embedanything-server
 - **SearchAgent** : Example of how you can use index for Searchr1 reasoning.
-- **Video guide** : Quick start for frame sampling: https://embed-anything.com/guides/video/
+
 
 ## 💡What is Vector Streaming
 
