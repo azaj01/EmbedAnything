@@ -11,6 +11,29 @@ use text_splitter::{ChunkConfig, TextSplitter};
 // use text_splitter::{ChunkConfig, TextSplitter};
 use tokenizers::Tokenizer;
 
+fn median<T>(data: &[T]) -> T
+where
+    T: Copy + PartialOrd + std::ops::Add<Output = T> + std::ops::Div<Output = T> + From<u8>,
+{
+    assert!(!data.is_empty(), "median requires at least one data point");
+    let mut sorted = data.to_vec();
+    sorted.sort_by(|a, b| a.partial_cmp(b).unwrap());
+    let mid = sorted.len() / 2;
+    if sorted.len() % 2 == 0 {
+        (sorted[mid - 1] + sorted[mid]) / T::from(2u8)
+    } else {
+        sorted[mid]
+    }
+}
+
+fn std_dev(data: &[f32]) -> f32 {
+    assert!(data.len() > 1, "standard deviation requires at least two data points");
+    let n = data.len() as f32;
+    let mean = data.iter().sum::<f32>() / n;
+    let variance = data.iter().map(|x| (x - mean).powi(2)).sum::<f32>() / n;
+    variance.sqrt()
+}
+
 pub struct StatisticalChunker {
     pub encoder: Arc<Embedder>,
     pub device: candle_core::Device,
@@ -250,9 +273,9 @@ impl StatisticalChunker {
             })
             .collect::<Vec<_>>();
 
-        // analyze the distribution of similarity scores to oset initial bounds
-        let median_score = statistical::median(similarities);
-        let std_dev = statistical::standard_deviation(similarities, None);
+        // analyze the distribution of similarity scores to set initial bounds
+        let median_score = median(similarities);
+        let std_dev = std_dev(similarities);
 
         // set initial bounds based on median and standard deviation
         let mut low = f32::max(0.0, median_score - std_dev);
@@ -277,7 +300,7 @@ impl StatisticalChunker {
                 .map(|(start, end)| cumulative_token_counts[*end] - cumulative_token_counts[*start])
                 .collect();
 
-            median_tokens = statistical::median(&split_token_counts);
+            median_tokens = median(&split_token_counts);
 
             if self.min_split_tokens - self.split_token_tolerance <= median_tokens
                 && median_tokens <= self.max_split_tokens + self.split_token_tolerance
